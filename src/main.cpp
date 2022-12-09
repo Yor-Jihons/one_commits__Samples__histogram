@@ -105,34 +105,85 @@ namespace Original{
     };
 }
 
+namespace Original{
+    class FormatException : public std::exception{
+        public:
+            FormatException(){}
+            ~FormatException() = default;
+
+            const char* what( void ) const noexcept{
+                return "This data is wrong.";
+            }
+    };
+
+    class OutOfBoundException : public std::exception{
+        public:
+            OutOfBoundException(){}
+            ~OutOfBoundException() = default;
+
+            const char* what( void ) const noexcept{
+                return "This data is out of bound.";
+            }
+    };
+}
+
+
+namespace Original{
+    bool IsDigitString( const std::string& str ){
+        for( int i = 0; i < static_cast<int>(str.size()); i++ ){
+            if( std::isdigit( str[i] ) == 0 ) return false;
+        }
+    return true;
+    }
+    int ConvertStringToInt( const std::string& str ){
+        if( !IsDigitString( str ) ) throw FormatException();
+        int n = std::atoi( str.c_str() );
+    return n;
+    }
+
+    bool IsValidNumber4N( int n ){
+        if( n >= 1 && n <= 30 ) return true;
+    return false;
+    }
+
+    bool IsValidNumber4An( int n ){
+        if( n >= 1 && n <= 100 ) return true;
+    return false;
+    }
+}
 
 int main( int argc, char** argv ){
-    int n;
-    {
-        std::string str1;
-        std::getline( cin, str1 );
-        n = std::atoi( str1.c_str() );
-    }
+    try{
+        int n;
+        {
+            std::string str1;
+            std::getline( cin, str1 );
+            n = std::atoi( str1.c_str() );
 
-    std::vector<int> nums( n );
-    {
-        std::string str2;
-        std::getline( cin, str2 );
-        auto strs = Util::split( str2 );
-        int i = 0;
-        for( auto s : strs ){
-            nums[i] = std::atoi( s.c_str() );
-            i++;
+            if( !Original::IsValidNumber4N( n ) ) throw Original::OutOfBoundException();
         }
+
+        std::vector<int> nums( n );
+        {
+            std::string str2;
+            std::getline( cin, str2 );
+            auto strs = Util::split( str2 );
+            int i = 0;
+            for( auto s : strs ){
+                nums[i] = Original::ConvertStringToInt( s );
+                if( !Original::IsValidNumber4An( nums[i] ) ) throw Original::OutOfBoundException();
+                i++;
+            }
+        }
+
+        Original::HistEx histEx;
+        for( int i = 0; i < n; i++ ){
+            histEx.Count( nums[i] );
+        }
+
+        histEx.Print();
+    }catch( std::exception& e ){
+        cout << e.what() << endl;
     }
-
-    Original::HistEx histEx;
-    for( int i = 0; i < n; i++ ){
-        histEx.Count( nums[i] );
-    }
-
-    histEx.Print();
-
-    // 1. hists に 
 return 0;
 }

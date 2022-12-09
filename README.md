@@ -11,7 +11,7 @@ This is a sample so that I can commit this to the GitHub.
 ## 2. Conditions
 
 ```
-1≦N≦10
+1≦N≦30
 1≦a(i)≦100
 ```
 
